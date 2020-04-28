@@ -13,6 +13,7 @@ interface IOnMove {
   positionY: number;
   scale: number;
   zoomCurrentDistance: number;
+  isHorizontalOuterRangeOffset: boolean
 }
 
 export interface IOnClick {

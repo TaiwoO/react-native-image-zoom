@@ -32,6 +32,9 @@ export default class ImageViewer extends React.Component<Props, State> {
   private zoomLastDistance: number | null = null;
   private zoomCurrentDistance = 0;
 
+  //
+  private isHorizontalOuterRangeOffset = false;
+
   // 图片手势处理
   private imagePanResponder: PanResponderInstance | null = null;
 
@@ -207,6 +210,8 @@ export default class ImageViewer extends React.Component<Props, State> {
           this.horizontalWholeCounter += diffX;
           this.verticalWholeCounter += diffY;
 
+          this.isHorizontalOuterRangeOffset =  false;
+
           if (Math.abs(this.horizontalWholeCounter) > 5 || Math.abs(this.verticalWholeCounter) > 5) {
             // 如果位移超出手指范围，取消长按监听
             clearTimeout(this.longPressTimeout);
@@ -236,6 +241,8 @@ export default class ImageViewer extends React.Component<Props, State> {
                       // 溢出量置为0，偏移量减去剩余溢出量，并且可以被拖动
                       diffX += this.horizontalWholeOuterCounter;
                       this.horizontalWholeOuterCounter = 0;
+                      
+                      this.isHorizontalOuterRangeOffset = true;
                       if (this.props.horizontalOuterRangeOffset) {
                         this.props.horizontalOuterRangeOffset(0);
                       }
@@ -256,6 +263,8 @@ export default class ImageViewer extends React.Component<Props, State> {
                       // 溢出量置为0，偏移量减去剩余溢出量，并且可以被拖动
                       diffX += this.horizontalWholeOuterCounter;
                       this.horizontalWholeOuterCounter = 0;
+
+                      this.isHorizontalOuterRangeOffset = true;
                       if (this.props.horizontalOuterRangeOffset) {
                         this.props.horizontalOuterRangeOffset(0);
                       }
@@ -302,6 +311,8 @@ export default class ImageViewer extends React.Component<Props, State> {
 
               if (this.horizontalWholeOuterCounter !== 0) {
                 // 如果溢出偏移量不是0，执行溢出回调
+
+                this.isHorizontalOuterRangeOffset = true;
                 if (this.props.horizontalOuterRangeOffset) {
                   this.props.horizontalOuterRangeOffset(this.horizontalWholeOuterCounter);
                 }
@@ -582,7 +593,8 @@ export default class ImageViewer extends React.Component<Props, State> {
         positionX: this.positionX,
         positionY: this.positionY,
         scale: this.scale,
-        zoomCurrentDistance: this.zoomCurrentDistance
+        zoomCurrentDistance: this.zoomCurrentDistance,
+        isHorizontalOuterRangeOffset: this.isHorizontalOuterRangeOffset
       });
     }
   }
